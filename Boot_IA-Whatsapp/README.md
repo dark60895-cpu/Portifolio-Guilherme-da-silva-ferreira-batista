@@ -1,80 +1,134 @@
-# WhatsApp Gemini Bot
+# Agente Conversacional WhatsApp + Gemini
 
-Bot de WhatsApp com IA (Google Gemini) que conversa de forma fluida, mantém
-contexto da conversa e segue regras de conduta configuráveis.
+Este projeto conecta seu WhatsApp a um agente de IA (Google Gemini) que conversa
+automaticamente com quem te chamar no privado.
 
-## Arquivos
+⚠️ **Importante:** por segurança (evitar banimento do seu número), este bot foi
+configurado para responder **apenas conversas privadas**, e não envia
+mensagens automáticas em grupos. Isso está no código (`index.js`), então não
+precisa se preocupar em configurar nada extra para isso.
 
-- `index.js` — arquivo principal do bot
-- `filtro.js` — filtro de segurança (guardrail) antes de chamar a IA
-- `package.json` — dependências do projeto
-- `.env.example` — modelo do arquivo de configuração
+---
 
-## Como instalar (Windows / PowerShell)
+## 1. Pré-requisitos
 
-1. Extraia esta pasta em `C:\Users\SEU_USUARIO\Videos\whatsapp-gemini-bot`
-   (ou qualquer outro lugar de sua preferência).
+Você precisa ter o **Node.js** instalado. Para checar se já tem, abra o
+PowerShell e rode:
 
-2. Abra o PowerShell nessa pasta:
+```powershell
+node --version
+```
 
-   ```powershell
-   cd C:\Users\SEU_USUARIO\Videos\whatsapp-gemini-bot
-   ```
+Se aparecer um erro ("não é reconhecido..."), baixe e instale o Node.js aqui:
+https://nodejs.org (baixe a versão **LTS**).
 
-3. Instale as dependências:
+---
 
-   ```powershell
-   npm install
-   ```
+## 2. Baixar e preparar o projeto
 
-4. Crie o arquivo `.env` a partir do exemplo:
+1. Extraia a pasta `whatsapp-gemini-bot` em algum lugar do seu computador
+   (ex: `C:\Users\SeuNome\Documents\whatsapp-gemini-bot`).
 
-   ```powershell
-   Copy-Item .env.example .env
-   notepad .env
-   ```
+2. Abra o PowerShell **nessa pasta**. Você pode fazer isso assim:
+   - Abra o Explorador de Arquivos e navegue até a pasta
+   - Clique na barra de endereço, digite `powershell` e aperte Enter
 
-   Troque `coloque_sua_chave_aqui` pela sua chave real da API do Gemini
-   (gerada em https://aistudio.google.com/apikey). Salve e feche.
+   Ou, alternativamente, abra o PowerShell normalmente e rode:
 
-5. Rode o bot:
+```powershell
+cd "C:\Users\SeuNome\Documents\whatsapp-gemini-bot"
+```
 
-   ```powershell
-   node index.js
-   ```
+(troque pelo caminho real onde você extraiu a pasta)
 
-6. Vai aparecer um QR code no terminal. Abra o WhatsApp no celular:
-   **Configurações → Aparelhos conectados → Conectar um aparelho**,
-   e escaneie o QR code.
+---
 
-7. Pronto — mande uma mensagem de qualquer número (fora de grupos) para o
-   número conectado, e o bot deve responder.
+## 3. Instalar as dependências
 
-## Personalizando o bot
+Dentro da pasta do projeto, rode:
 
-- **Personalidade e regras**: edite `BOT_PERSONA` no `.env`.
-- **Nome do bot**: edite `BOT_NAME` no `.env`.
-- **Modelo de IA usado**: edite `GEMINI_MODEL` no `.env`
-  (padrão: `gemini-2.5-flash`, uma versão estável).
-- **Palavras bloqueadas**: edite a lista `palavrasBloqueadas` em `filtro.js`.
+```powershell
+npm install
+```
 
-## O que o bot já faz
+Isso vai baixar todas as bibliotecas necessárias (pode demorar 1-2 minutos).
 
-- Responde qualquer pessoa em conversa privada (nunca em grupos, listas de
-  transmissão ou canais — por segurança e para respeitar os termos do
-  WhatsApp).
-- Mantém contexto da conversa (memória das últimas 20 mensagens por pessoa,
-  enquanto o processo estiver rodando).
-- Tenta de novo automaticamente se a IA estiver sobrecarregada (erro 503).
-- Avisa educadamente se a cota diária da API acabar (erro 429) — nesse caso
-  é preciso esperar o reset da cota ou verificar o billing da conta Google.
+---
 
-## Problemas comuns
+## 4. Configurar sua chave da API do Gemini
 
-- **Erro "GEMINI_API_KEY não definida"**: verifique se o `.env` existe e
-  tem a chave preenchida corretamente.
-- **Erro 429 (quota exceeded)**: sua chave está no nível gratuito da API,
-  ou o billing não está vinculado ao projeto correto no Google Cloud
-  Console. Veja https://ai.google.dev/gemini-api/docs/rate-limits.
-- **Erro 503 (high demand)**: sobrecarga temporária do modelo — o bot já
-  tenta de novo automaticamente algumas vezes.
+1. Consiga uma chave gratuita em: https://aistudio.google.com/app/apikey
+2. Na pasta do projeto, copie o arquivo de exemplo:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+3. Abra o arquivo `.env` (pode abrir com o Bloco de Notas):
+
+```powershell
+notepad .env
+```
+
+4. Substitua `coloque_sua_chave_aqui` pela sua chave real do Gemini, salve e feche.
+
+---
+
+## 5. Rodar o bot
+
+```powershell
+npm start
+```
+
+Um **QR code** vai aparecer no terminal. Escaneie com o WhatsApp do seu
+celular (Configurações → Aparelhos conectados → Conectar um aparelho).
+
+Depois de conectar, você verá a mensagem:
+
+```
+✅ Assistente está online e conectado ao WhatsApp!
+```
+
+Pronto! Agora, quando alguém mandar mensagem no seu privado, o Gemini vai
+responder automaticamente.
+
+---
+
+## 6. Parar o bot
+
+No terminal onde ele está rodando, aperte:
+
+```
+Ctrl + C
+```
+
+---
+
+## 7. Personalizando o agente
+
+Abra o arquivo `.env` e edite:
+
+- `BOT_NAME` → nome do agente (aparece só nos logs do terminal)
+- `BOT_PERSONA` → como o agente deve se comportar/responder. Exemplos:
+  - `"Você é um assistente técnico que responde de forma objetiva e curta."`
+  - `"Você é simpático, usa emojis e responde em tom descontraído."`
+
+Depois de editar, pare o bot (Ctrl+C) e rode `npm start` de novo.
+
+---
+
+## Dúvidas comuns
+
+**O QR code não aparece direito no terminal.**
+Aumente o tamanho da janela do PowerShell ou use o Terminal do Windows
+(Windows Terminal), que renderiza melhor.
+
+**Erro de "sessão desconectada".**
+Apague a pasta `.wwebjs_auth` que foi criada no projeto e rode `npm start`
+de novo para gerar um novo QR code.
+
+**Posso usar esse bot para postar em grupos automaticamente?**
+Não — o código foi feito propositalmente para ignorar grupos, pois enviar
+mensagens automáticas em grupos viola os Termos de Uso do WhatsApp e pode
+banir seu número permanentemente. Ele foi pensado para atendimento/conversa
+1-a-1, que é um uso seguro e permitido.
